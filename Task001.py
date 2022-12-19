@@ -1,22 +1,46 @@
 class Request:
-    url: str
-    method: str
-    params = {}
+    _url: str
+    _method: str
+    _params = {}
 
     def __init__(self, url: str, method: str, **kwargs):
-        self.url = url
+        self._url = url
         if method == 'get':
-            self.method = 'GET'
+            self._method = 'GET'
         elif method == 'post':
-            self.method = 'POST'
+            self._method = 'POST'
         else:
-            self.method = None
+            self._method = None
         if 1 < len(kwargs) < 6:
             for key, value in kwargs.items():
-                self.params[key] = value
+                self._params[key] = value
         else:
             print('Неверное количество параметров')
 
+    @property
+    def url(self):
+        url = ''
+        if self._method == 'GET':
+            url = f'https://{self._url}?'
+            for k, v in self._params.items():
+                url += f'{k}={v}&'
+            else:
+                url = url[:-1]
+                url += '/'
+        elif self._method == 'POST':
+            url = f'https://{self._url}/'
+        return url
+
+    @property
+    def method(self):
+        return self._method
+
+    @property
+    def params(self):
+        par = ''
+        for k, v in self._params.items():
+            par += f'{k}={v}, '
+        return par[:-2]
 
 request = Request('www.www.com', 'get', k=1, b=2)
 
